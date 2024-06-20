@@ -4,10 +4,11 @@ const UserController = require('../controllers/UserController') //importar contr
 const controller = new UserController(); //crear una instancia
 
 //servicios web
-app.get('/usuario', controller.getUsuarios)
-app.post('/usuario', controller.createUsuario)
-app.get('/usuario/:id', controller.getUsuarioById)
-app.put('/usuario/:id', controller.updateUsuario)
-app.delete('/usuario/:id', controller.deleteUsuario)
+app.get('/usuario', controller.getUsuarios) //obtener
+app.post('/usuario', controller.createUsuario)//crear nuevo
+app.get('/usuario/:id', controller.getUsuarioById)//consultar
+app.put('/usuario/:id', controller.updateUsuario)//actualizar
+app.delete('/usuario/:id', controller.deleteUsuario)//eliminar
+app.post('/login', controller.login)//hacer login
 
 module.exports = app

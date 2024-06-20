@@ -13,6 +13,8 @@ app.use(express.urlencoded({extended: true})) //acceder a la info de la url
 app.use(express.json()) //analizar info en formato json
 const UserRoutes= require('./routes/UserRoutes')
 app.use('/', UserRoutes)
+const CarRoutes= require('./routes/CarRoutes')
+app.use('/', CarRoutes)
 
 /*crear el serv web + funcionalidad de la API
 res-> response/respuesta

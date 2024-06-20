@@ -1,6 +1,8 @@
 const UserSchema = require('../models/Usuario') //acceder a los datos del modelo
 const bcrypt =require('bcrypt')
-//permiote agrupar atributos y funciones
+const jwt = require('jsonwebtoken')
+
+//permite agrupar atributos y funciones
 class UserController {
     async getUsuarios(req, res){
         var usuarios = await UserSchema.find();
@@ -32,11 +34,13 @@ class UserController {
 
     async updateUsuario(req, res){
         var id = req.params.id;
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        
         var updateUser={
             nombre: req.body.nombre,
             apellidos: req.body.apellidos,
             correo: req.body.correo,
-            password: req.body.password,
+            password: hashedPassword,
         }
 
         await UserSchema.findByIdAndUpdate(id, updateUser, {new: true})
@@ -53,6 +57,38 @@ class UserController {
         await UserSchema.deleteOne({_id: id})
 
         res.json({"status": "success", "message": "Usuario eliminado correctamente"})
+    }
+
+    async login(req, res){
+        //capturar el correo y contraseña ingresadas
+        var correo = req.body.correo;
+        var password = req.body.password
+
+        //buscar usuario por el correo
+        var usuario = await UserSchema.findOne({correo})
+        if(usuario){
+            //comparar la contraseña ingresada con la registrada por el usuario
+            var verificacionClave = await bcrypt.compare(password, usuario.password)
+                                                        //ingreso  datos almacenados
+            if(verificacionClave){
+                //crear un token con la info codificada del usuario
+                usuario.password = null
+                const token = jwt.sign({usuario}, 'secret', {expiresIn: '1h'})
+                res.send({
+                    //verificación exitosa
+                    "status": "success",
+                    "message": "Bienvenido "+usuario.nombre+" "+usuario.apellidos,
+                    "user_id": usuario._id,
+                    "token": token
+                })
+            }else{
+                //verificación erronea por contraseña
+                res.status(401).send({"status": "error", "message": "Datos invalidos, verifique su contraseña."})
+            }
+        }else{
+            //verificación fallida por correo
+            res.status(401).send({"status": "error", "message": "El correo ingresado no está registrado"})
+        }
     }
 }
 
