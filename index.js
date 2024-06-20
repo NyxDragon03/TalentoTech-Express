@@ -3,6 +3,17 @@ const express= require('express') //import librería
 const app= express() //inicializar la variable de la librería
 const port= 3000 //def. el puerto a usar
 
+const mongoose= require('mongoose'); //import. libreria mongoose
+require('dotenv').config()
+const DB_CONNECTION = process.env.DB_CONNECTION || ''
+mongoose.connect(DB_CONNECTION) //cadena de conexión
+
+//import. rutas de otro archivo
+app.use(express.urlencoded({extended: true})) //acceder a la info de la url
+app.use(express.json()) //analizar info en formato json
+const UserRoutes= require('./routes/UserRoutes')
+app.use('/', UserRoutes)
+
 /*crear el serv web + funcionalidad de la API
 res-> response/respuesta
 req-> request/info de entrada*/
