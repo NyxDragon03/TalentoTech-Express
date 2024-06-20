@@ -1,5 +1,5 @@
 const UserSchema = require('../models/Usuario') //acceder a los datos del modelo
-
+const bcrypt =require('bcrypt')
 //permiote agrupar atributos y funciones
 class UserController {
     async getUsuarios(req, res){
@@ -8,15 +8,20 @@ class UserController {
     }
 
     async createUsuario(req, res){
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10) //encriptar contraseña
         var nuevoUser={
             nombre: req.body.nombre,
             apellidos: req.body.apellidos,
             correo: req.body.correo,
-            password: req.body.password,
+            password: hashedPassword,
         }
 
-        await UserSchema(nuevoUser).save();
-        res.send("Guardado correctamente")
+        await UserSchema(nuevoUser).save().then((result) =>{
+            res.send({"status": "success", "message": "Usuario creado correctamente"})
+        }).catch((error) => {
+            res.send({"status": "error", "message": error.message})
+        })
     }
 
     async getUsuarioById(req, res){
@@ -35,7 +40,11 @@ class UserController {
         }
 
         await UserSchema.findByIdAndUpdate(id, updateUser, {new: true})
-        res.json({"status": "success", "message": "Usuario actualizado correctamente"})
+        .then((result) =>{ //ejecución correcta//
+            res.send({"status": "success", "message": "Usuario actualizado correctamente"})
+        }).catch((error) => { //ejecución con fallas//
+            res.send({"status": "error", "message": error.message})
+        })
     }
 
     async deleteUsuario(req, res){
