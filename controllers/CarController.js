@@ -11,7 +11,7 @@ class CarController{
         var nuevoCarro={
             modelo: req.body.modelo,
             marca: req.body.marca,
-            color: req.body.correo,
+            color: req.body.color,
             cilindraje: req.body.cilindraje,
             placa: req.body.placa,
             linea: req.body.linea,
@@ -21,7 +21,7 @@ class CarController{
         await CarSchema(nuevoCarro).save().then((result) =>{
             res.send({"status": "success", "message": "carro guardado con exito"})
         }).catch((error) => {
-            res.send({"status": "error", "message": error.message})
+            res.status(400).send({"status": "error", "message": error.message})
         })
     }
 
@@ -47,7 +47,7 @@ class CarController{
         .then((result) =>{ 
             res.send({"status": "success", "message": "Carro actualizado correctamente"})
         }).catch((error) => {
-            res.send({"status": "error", "message": error.message})
+            res.status(400).send({"status": "error", "message": error.message})
         })
     }
 
