@@ -8,6 +8,10 @@ require('dotenv').config()
 const DB_CONNECTION = process.env.DB_CONNECTION || ''
 mongoose.connect(DB_CONNECTION) //cadena de conexión
 
+//agg configuración de cors
+const cors = require('cors')
+app.use(cors());
+
 //import. rutas de otro archivo
 app.use(express.urlencoded({extended: true})) //acceder a la info de la url
 app.use(express.json()) //analizar info en formato json
